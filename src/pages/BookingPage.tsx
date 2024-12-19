@@ -2,9 +2,11 @@ import React, { useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { z } from 'zod';
+import { z } from 'zod'; 
 import { useAuth } from '../contexts/AuthContext';
-import { Calendar } from 'lucide-react';
+import { Calendar, AlertCircle } from 'lucide-react';
+import { collection, addDoc } from 'firebase/firestore';
+import { db } from '../lib/firebase';
 
 const bookingSchema = z.object({
   date: z.string(),
@@ -17,6 +19,7 @@ type BookingFormData = z.infer<typeof bookingSchema>;
 export default function BookingPage() {
   const location = useLocation();
   const navigate = useNavigate();
+  const [error, setError] = useState<string>('');
   const { user } = useAuth();
   const { service, specialist } = location.state || {};
 
@@ -37,12 +40,24 @@ export default function BookingPage() {
     }
     
     try {
-      // TODO: Implementare la logica di prenotazione con Firebase
-      console.log('Prenotazione:', { ...data, service, specialist });
-      // Redirect alla pagina di conferma
+      const appointmentData = {
+        patientId: user.uid,
+        doctorId: specialist?.id || '',
+        doctorName: specialist ? `${specialist.firstName} ${specialist.lastName}` : '',
+        specialization: specialist?.specialization || service?.title || '',
+        date: data.date,
+        time: data.time,
+        notes: data.notes || '',
+        status: 'scheduled',
+        location: 'Studio 1', // Puoi rendere questo dinamico se necessario
+        createdAt: new Date().toISOString()
+      };
+
+      await addDoc(collection(db, 'appointments'), appointmentData);
       navigate('/profilo');
     } catch (error) {
       console.error('Errore durante la prenotazione:', error);
+      setError('Si è verificato un errore durante la prenotazione. Riprova più tardi.');
     }
   };
 
@@ -70,6 +85,15 @@ export default function BookingPage() {
               </p>
             )}
           </div>
+
+          {error && (
+            <div className="mb-6 bg-red-50 border border-red-200 rounded-md p-4">
+              <div className="flex">
+                <AlertCircle className="h-5 w-5 text-red-400" />
+                <p className="ml-3 text-sm text-red-700">{error}</p>
+              </div>
+            </div>
+          )}
 
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
             <div>
