@@ -1,0 +1,19 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Allow users to read and write their own data
+    match /users/{userId} {
+      allow create: if request.auth != null;
+      allow read, write: if request.auth != null && request.auth.uid == userId;
+    }
+    
+    // Allow authenticated users to manage their appointments
+    match /appointments/{appointmentId} {
+      allow create: if request.auth != null;
+      allow read, update: if request.auth != null && (
+        resource.data.patientId == request.auth.uid || 
+        resource.data.doctorId == request.auth.uid
+      );
+    }
+  }
+}
