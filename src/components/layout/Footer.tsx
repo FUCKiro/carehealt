@@ -61,6 +61,16 @@ export default function Footer() {
                   Contattaci
                 </Link>
               </li>
+              <li>
+                <Link to="/privacy" className="text-sm text-gray-500 hover:text-gray-900">
+                  Privacy Policy
+                </Link>
+              </li>
+              <li>
+                <Link to="/termini" className="text-sm text-gray-500 hover:text-gray-900">
+                  Termini e Condizioni
+                </Link>
+              </li>
             </ul>
           </div>
 

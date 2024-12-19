@@ -13,6 +13,8 @@ import ResetPasswordPage from './pages/ResetPasswordPage';
 import ProfilePage from './pages/ProfilePage';
 import BookingPage from './pages/BookingPage';
 import EmailVerificationPage from './pages/EmailVerificationPage';
+import PrivacyPolicyPage from './pages/PrivacyPolicyPage';
+import TermsPage from './pages/TermsPage';
 
 function App() {
   return (
@@ -31,6 +33,8 @@ function App() {
           <Route path="/recupera-password" element={<ResetPasswordPage />} />
           <Route path="/prenota" element={<BookingPage />} />
           <Route path="/verifica-email" element={<EmailVerificationPage />} />
+          <Route path="/privacy" element={<PrivacyPolicyPage />} />
+          <Route path="/termini" element={<TermsPage />} />
         </Routes>
         <Footer />
         </div>
